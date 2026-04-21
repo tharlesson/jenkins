@@ -31,10 +31,14 @@ jobs:
         run: docker compose up -d --build jenkins-controller
 
       - name: Wait for Jenkins
-        run: ./scripts/wait-for-services.sh http://localhost:8080/login 300
+        run: bash ./scripts/wait-for-services.sh http://localhost:8080/login 600
 
       - name: Run smoke tests
-        run: ./scripts/smoke-tests.sh
+        run: bash ./scripts/smoke-tests.sh
+
+      - name: Dump Jenkins logs
+        if: failure()
+        run: docker compose logs --no-color jenkins-controller
 
       - name: Tear down
         if: always()
